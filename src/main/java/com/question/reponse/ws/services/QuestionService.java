@@ -23,7 +23,7 @@ public class QuestionService {
 	@Autowired
 	Utils util;
 
-	public QuestionDto questionCreate(QuestionDto questionDto, String id) {
+	public QuestionDto questionCreate(QuestionDto questionDto) {
 
 		ModelMapper modelMapper = new ModelMapper();
 		QuestionEntity questionEntity = new QuestionEntity();

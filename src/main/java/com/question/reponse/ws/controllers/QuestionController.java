@@ -37,17 +37,16 @@ public class QuestionController {
 	@Autowired
 	QuestionService questionService;
 
-	@PostMapping(path = "/{id}", consumes = { MediaType.APPLICATION_XML_VALUE,
+	@PostMapping( consumes = { MediaType.APPLICATION_XML_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
 					MediaType.APPLICATION_JSON_VALUE }
 
 	)
 	@ApiOperation("Cette methode permet de sauvgarder une question")
-	public ResponseEntity<QuestionResponse> storeQuestion(@RequestBody @Valid QuestionRequest questionRequest,
-			@PathVariable String id) {
+	public ResponseEntity<QuestionResponse> storeQuestion(@RequestBody @Valid QuestionRequest questionRequest) {
 		ModelMapper modelMapper = new ModelMapper();
 		QuestionDto questionDto = modelMapper.map(questionRequest, QuestionDto.class);
-		QuestionDto createQuestion = questionService.questionCreate(questionDto, id);
+		QuestionDto createQuestion = questionService.questionCreate(questionDto);
 		QuestionResponse newValue = modelMapper.map(createQuestion, QuestionResponse.class);
 		return new ResponseEntity<QuestionResponse>(newValue, HttpStatus.CREATED);
 	}
