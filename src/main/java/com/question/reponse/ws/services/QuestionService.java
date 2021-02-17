@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.question.reponse.ws.entities.QuestionEntity;
+import com.question.reponse.ws.entities.ReponseEntity;
 import com.question.reponse.ws.repositories.QuestionRepository;
+import com.question.reponse.ws.repositories.ReponseRepository;
 import com.question.reponse.ws.shared.Utils;
 import com.question.reponse.ws.shared.dto.QuestionDto;
 import com.question.reponse.ws.shared.dto.ReponseDto;
@@ -20,8 +22,12 @@ public class QuestionService {
 
 	@Autowired
 	QuestionRepository questionRepository;
+	@Autowired 
+	ReponseRepository  reponseRepository;
+
 	@Autowired
 	Utils util;
+	private List<QuestionDto>  questions;
 
 	public QuestionDto questionCreate(QuestionDto questionDto) {
 
@@ -31,15 +37,16 @@ public class QuestionService {
 		questionEntity.setQuestionId(util.generateStringId(30));
 		questionEntity.setId(questionDto.getId());
 		questionEntity.setLanguage(questionDto.getLanguage());
-		questionEntity.setDateDeCreation(questionDto.getDateDeCreation());
-		questionEntity.setLastModified(questionDto.getLastModified());
+		questionEntity.setDateDeCreation(new Date());
+		questionEntity.setLastModified(new Date());
 
 	/*for(int i=0; i<questionDto.getReponses().size();i++) {
     ReponseDto reponse=questionDto.getReponses().get(i);
-   // had set pour attacher l'address a un user
-     reponse.getQuestions().add(questionDto);
-     reponse.setReponseId(util.generateStringId(30));
-	 questionDto.getReponses().set(i,reponse);
+    questions = reponse.getQuestions();
+    questions.add(questionDto);
+    reponse.setQuestions( questions);
+    reponse.setReponseId(util.generateStringId(30));
+	questionDto.getReponses().set(i,reponse);
 	 }*/
 		QuestionEntity questionSave = questionRepository.save(questionEntity);
 
@@ -85,6 +92,30 @@ public class QuestionService {
 		List<QuestionDto> questionDto=new  ModelMapper().map(questions, listType);
 		return questionDto;
 		
+		
+	}
+	
+	public QuestionDto createQuestionResponse(String questionId, String reponseId) {
+		ModelMapper modelMapper = new ModelMapper();
+		ReponseEntity reponseEntity = reponseRepository.findByReponseId(reponseId);
+		if (reponseEntity == null)
+			throw new RuntimeException("The reponse doesn't exist");
+		
+		QuestionEntity questionEntity = questionRepository.findByQuestionId(questionId);
+		if (questionEntity == null)
+			throw new RuntimeException("The question doesn't exist");
+		
+		if(questionEntity.getReponses().contains(reponseEntity))
+			throw new RuntimeException("user already added");
+		
+		questionEntity.getReponses().add(reponseEntity);
+		
+	         
+		QuestionEntity  questionUpdated = questionRepository.save(questionEntity);
+		
+		QuestionDto reponse = modelMapper.map(questionUpdated, QuestionDto.class);
+	
+		return reponse;
 	}
 
 }

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import com.question.reponse.ws.requests.ReponseRequest;
 import com.question.reponse.ws.responses.ReponseResponse;
 import com.question.reponse.ws.services.ReponseService;
@@ -41,7 +42,7 @@ public class ReponseController {
 	@PostMapping(path = "/{id}", consumes = { MediaType.APPLICATION_XML_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
 					MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<ReponseResponse> storeReponse(@RequestBody @Valid ReponseResponse ReponseResponse,
+	public ResponseEntity<ReponseResponse> storeReponseInQuestion(@RequestBody @Valid ReponseResponse ReponseResponse,
 			@PathVariable String id) {
 		ModelMapper modelMapper = new ModelMapper();
 		ReponseDto ReponseDto = modelMapper.map(ReponseResponse, ReponseDto.class);
@@ -107,5 +108,18 @@ public class ReponseController {
 		return new ResponseEntity<List<ReponseResponse>>(reponsesResponse, HttpStatus.OK);
 
 	}
+	@ApiOperation("Cette methode permet de sauvgarder une reponse")
+	@PostMapping(consumes = { MediaType.APPLICATION_XML_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
+					MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<ReponseResponse> storeReponse(@RequestBody @Valid ReponseResponse ReponseResponse,
+			@PathVariable String id) {
+		ModelMapper modelMapper = new ModelMapper();
+		ReponseDto ReponseDto = modelMapper.map(ReponseResponse, ReponseDto.class);
+		ReponseDto createReponse = reponseService.reponseCreate(ReponseDto);
+		ReponseResponse newValue = modelMapper.map(createReponse, ReponseResponse.class);
+		return new ResponseEntity<ReponseResponse>(newValue, HttpStatus.CREATED);
+	}
+
 
 }

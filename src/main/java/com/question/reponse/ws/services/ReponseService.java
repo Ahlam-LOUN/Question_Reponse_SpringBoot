@@ -6,10 +6,10 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
+
 
 import com.question.reponse.ws.entities.QuestionEntity;
 import com.question.reponse.ws.entities.ReponseEntity;
@@ -39,7 +39,7 @@ public class ReponseService  {
 		ReponseEntity.setReponseQuestion(reponseDto.getReponseQuestion());
 		ReponseEntity.setReponseId(util.generateStringId(30));
 		ReponseEntity.setLanguage(reponseDto.getLanguage());
-		ReponseEntity.setDateDeCreation(reponseDto.getDateDeCreation());
+		ReponseEntity.setDateDeCreation(new Date());
 		ReponseEntity.setLastModified(reponseDto.getLastModified());
 		ReponseEntity.setScoreResponse(reponseDto.getScoreResponse());
 		
@@ -88,6 +88,26 @@ public class ReponseService  {
 		return reponseDto;
 		
 	}
+	
+	public ReponseDto reponseCreate(ReponseDto reponseDto) {
+
+		ModelMapper modelMapper = new ModelMapper();
+		ReponseEntity ReponseEntity = new ReponseEntity();
+		ReponseEntity.setReponseQuestion(reponseDto.getReponseQuestion());
+		ReponseEntity.setReponseId(util.generateStringId(30));
+		ReponseEntity.setLanguage(reponseDto.getLanguage());
+		ReponseEntity.setDateDeCreation(reponseDto.getDateDeCreation());
+		ReponseEntity.setLastModified(reponseDto.getLastModified());
+		ReponseEntity.setScoreResponse(reponseDto.getScoreResponse());
+		
+		ReponseEntity reponseSave = reponseRepository.save(ReponseEntity);
+
+		ReponseDto reponse = modelMapper.map(reponseSave, ReponseDto.class);
+		return reponse;
+	}
+	
+
+	
 
 
 

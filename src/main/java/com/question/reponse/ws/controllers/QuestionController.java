@@ -23,8 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.question.reponse.ws.requests.QuestionRequest;
 import com.question.reponse.ws.responses.QuestionResponse;
+import com.question.reponse.ws.responses.ReponseResponse;
 import com.question.reponse.ws.services.QuestionService;
 import com.question.reponse.ws.shared.dto.QuestionDto;
+import com.question.reponse.ws.shared.dto.ReponseDto;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -107,5 +109,13 @@ public class QuestionController {
 		return new ResponseEntity<List<QuestionResponse>>(questionsResponse, HttpStatus.OK);
 
 	}
+	@PutMapping(path = "/{questionId}/{reponseId}",
+			produces = { MediaType.APPLICATION_XML_VALUE,MediaType.APPLICATION_JSON_VALUE })
+			public ResponseEntity<QuestionResponse> updateResponse(@PathVariable String questionId,@PathVariable String reponseId) {
 
+			ModelMapper modelMapper = new ModelMapper();
+			QuestionDto updateQuestion =questionService.createQuestionResponse(questionId,reponseId);
+			QuestionResponse questionResponse =  modelMapper.map(updateQuestion, QuestionResponse.class);
+			return new ResponseEntity<QuestionResponse>(questionResponse, HttpStatus.ACCEPTED);
+			}
 }
